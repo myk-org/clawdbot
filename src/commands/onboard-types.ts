@@ -47,10 +47,12 @@ export type AuthChoice =
   | "xai-api-key"
   | "qianfan-api-key"
   | "custom-api-key"
+  | "anthropic-vertex"
   | "skip";
 export type AuthChoiceGroupId =
   | "openai"
   | "anthropic"
+  | "anthropic-vertex"
   | "chutes"
   | "vllm"
   | "google"

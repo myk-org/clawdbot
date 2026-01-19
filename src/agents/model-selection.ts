@@ -45,6 +45,9 @@ export function normalizeProviderId(provider: string): string {
   if (normalized === "kimi-code") {
     return "kimi-coding";
   }
+  if (normalized === "vertex-claude" || normalized === "claude-vertex") {
+    return "anthropic-vertex";
+  }
   return normalized;
 }
 

@@ -4,6 +4,10 @@ import {
   DEFAULT_COPILOT_API_BASE_URL,
   resolveCopilotApiToken,
 } from "../providers/github-copilot-token.js";
+import {
+  buildAnthropicVertexProvider,
+  checkVertexCredentials,
+} from "./anthropic-vertex-provider.js";
 import { ensureAuthProfileStore, listProfilesForProvider } from "./auth-profiles.js";
 import { discoverBedrockModels } from "./bedrock-discovery.js";
 import {
@@ -805,6 +809,15 @@ export async function resolveImplicitProviders(params: {
     resolveApiKeyFromProfiles({ provider: "nvidia", store: authStore });
   if (nvidiaKey) {
     providers.nvidia = { ...buildNvidiaProvider(), apiKey: nvidiaKey };
+  }
+
+  // Anthropic Vertex AI: register if GCP credentials are available
+  const vertexCheck = checkVertexCredentials();
+  if (vertexCheck.available) {
+    const vertexProvider = buildAnthropicVertexProvider();
+    if (vertexProvider) {
+      providers["anthropic-vertex"] = vertexProvider;
+    }
   }
 
   return providers;

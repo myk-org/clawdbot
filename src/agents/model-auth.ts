@@ -4,6 +4,7 @@ import type { OpenClawConfig } from "../config/config.js";
 import type { ModelProviderAuthMode, ModelProviderConfig } from "../config/types.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { getShellEnvAppliedKeys } from "../infra/shell-env.js";
+import { getAnthropicVertexAuth } from "./anthropic-vertex-provider.js";
 import {
   normalizeOptionalSecretInput,
   normalizeSecretInput,
@@ -269,6 +270,15 @@ export function resolveEnvApiKey(provider: string): EnvApiKeyResult | null {
       return null;
     }
     return { apiKey: envKey, source: "gcloud adc" };
+  }
+
+  if (normalized === "anthropic-vertex") {
+    try {
+      const auth = getAnthropicVertexAuth();
+      return { apiKey: "vertex-ai-adc", source: auth.source };
+    } catch {
+      return null;
+    }
   }
 
   if (normalized === "opencode") {

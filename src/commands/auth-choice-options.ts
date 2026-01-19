@@ -47,6 +47,12 @@ const AUTH_CHOICE_GROUP_DEFS: {
     choices: ["vllm"],
   },
   {
+    value: "anthropic-vertex",
+    label: "Anthropic Vertex",
+    hint: "Claude via Google Cloud",
+    choices: ["anthropic-vertex"],
+  },
+  {
     value: "minimax",
     label: "MiniMax",
     hint: "M2.5 (recommended)",
@@ -280,6 +286,11 @@ const BASE_AUTH_CHOICE_OPTIONS: ReadonlyArray<AuthChoiceOption> = [
     hint: "Local proxy for VS Code Copilot models",
   },
   { value: "apiKey", label: "Anthropic API key" },
+  {
+    value: "anthropic-vertex",
+    label: "Anthropic Vertex AI",
+    hint: "Claude via Google Cloud (uses env vars)",
+  },
   {
     value: "opencode-zen",
     label: "OpenCode Zen (multi-model proxy)",
