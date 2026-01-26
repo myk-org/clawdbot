@@ -1,8 +1,9 @@
 FROM node:22-bookworm
 
-# Install Bun (required for build scripts)
+# Install Bun (required for build scripts) - install to /usr/local for all users
+ENV BUN_INSTALL="/usr/local"
 RUN curl -fsSL https://bun.sh/install | bash
-ENV PATH="/root/.bun/bin:${PATH}"
+ENV PATH="/usr/local/bin:${PATH}"
 
 RUN corepack enable
 
@@ -46,9 +47,12 @@ USER root
 ENV PATH="/home/linuxbrew/.linuxbrew/bin:/home/linuxbrew/.linuxbrew/sbin:${PATH}"
 ENV HOMEBREW_NO_AUTO_UPDATE=1
 
-# Install uv (Python package manager)
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/root/.local/bin:${PATH}"
+# Give node user access to Homebrew for brew tap/install operations
+RUN usermod -aG linuxbrew node && \
+    chmod -R g+w /home/linuxbrew/.linuxbrew
+
+# Install uv (Python package manager) - install to /usr/local/bin for all users
+RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
 
 # Install clawdhub globally via npm
 RUN npm i -g clawdhub && \
@@ -59,7 +63,7 @@ RUN curl -LO https://go.dev/dl/go1.23.4.linux-amd64.tar.gz && \
   tar -C /usr/local -xzf go1.23.4.linux-amd64.tar.gz && \
   rm go1.23.4.linux-amd64.tar.gz
 ENV PATH="/usr/local/go/bin:${PATH}"
-ENV GOPATH="/root/go"
+ENV GOPATH="/home/node/go"
 ENV PATH="${GOPATH}/bin:${PATH}"
 
 # Install gogcli (GOG.com CLI)
