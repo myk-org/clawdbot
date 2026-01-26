@@ -16,14 +16,20 @@ RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
       rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*; \
     fi
 
-# Install Homebrew dependencies
+# Install Homebrew dependencies and GitHub CLI (gh)
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
       build-essential \
       procps \
       file \
       git \
-      sudo && \
+      sudo \
+      curl \
+      gpg && \
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | gpg --dearmor -o /usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" > /etc/apt/sources.list.d/github-cli.list && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends gh && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
@@ -43,6 +49,10 @@ ENV HOMEBREW_NO_AUTO_UPDATE=1
 # Install uv (Python package manager)
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.local/bin:${PATH}"
+
+# Install clawdhub globally via npm
+RUN npm i -g clawdhub && \
+    cd /usr/local/lib/node_modules/clawdhub && npm install undici
 
 # Install Go
 RUN curl -LO https://go.dev/dl/go1.23.4.linux-amd64.tar.gz && \
