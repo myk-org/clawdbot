@@ -92,6 +92,10 @@ RUN chown -R node:node /app
 # This reduces the attack surface by preventing container escape via root privileges
 USER node
 
+# Install Claude Code CLI
+RUN curl -fsSL https://claude.ai/install.sh | bash
+ENV PATH="/home/node/.local/bin:${PATH}"
+
 # Start gateway server with default config.
 # Binds to loopback (127.0.0.1) by default for security.
 #
