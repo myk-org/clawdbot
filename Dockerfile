@@ -57,12 +57,12 @@ ENV HOMEBREW_NO_AUTO_UPDATE=1
 
 # Give node user access to Homebrew for brew tap/install operations
 RUN usermod -aG linuxbrew node && \
-    chmod -R g+w /home/linuxbrew/.linuxbrew
+  chmod -R g+w /home/linuxbrew/.linuxbrew
 
 # Install wacli (WhatsApp CLI) via Homebrew
 USER linuxbrew
 RUN brew tap steipete/tap && \
-    brew install steipete/tap/wacli
+  brew install steipete/tap/wacli
 USER root
 
 # Install uv (Python package manager) - install to /usr/local/bin for all users
@@ -114,6 +114,9 @@ ENV PATH="/home/node/.local/bin:${PATH}"
 USER root
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+RUN ln -s /app/moltbot.mjs /usr/local/bin/moltbot && \
+  chmod +x /app/moltbot.mjs
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 # Start gateway server with default config.
