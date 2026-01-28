@@ -34,6 +34,17 @@ RUN apt-get update && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
+# Install Docker CLI (not the full engine, just the CLI for docker-in-docker scenarios)
+RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg && \
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" > /etc/apt/sources.list.d/docker.list && \
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends docker-ce-cli && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
+
+# Create docker group and add node user to it (for docker socket access when mounted)
+RUN groupadd -f docker && usermod -aG docker node
+
 # Create linuxbrew user for Homebrew installation
 RUN useradd -m -s /bin/bash linuxbrew && \
   echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
