@@ -59,6 +59,12 @@ ENV HOMEBREW_NO_AUTO_UPDATE=1
 RUN usermod -aG linuxbrew node && \
     chmod -R g+w /home/linuxbrew/.linuxbrew
 
+# Install wacli (WhatsApp CLI) via Homebrew
+USER linuxbrew
+RUN brew tap steipete/tap && \
+    brew install steipete/tap/wacli
+USER root
+
 # Install uv (Python package manager) - install to /usr/local/bin for all users
 RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/usr/local/bin sh
 
