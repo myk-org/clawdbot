@@ -23,5 +23,12 @@ if [ -S /var/run/docker.sock ]; then
     fi
 fi
 
+# Create wacli log directory with proper ownership
+mkdir -p /home/node/.wacli
+chown node:node /home/node/.wacli
+
+# Start wacli sync in the background as the node user
+su - node -c "wacli sync --follow > /home/node/.wacli/sync.log 2>&1 &"
+
 # Drop privileges and execute the command as node user
 exec sudo -u node -E "$@"
