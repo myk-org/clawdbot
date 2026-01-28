@@ -42,9 +42,6 @@ RUN curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /
   apt-get clean && \
   rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*
 
-# Create docker group and add node user to it (for docker socket access when mounted)
-RUN groupadd -f docker && usermod -aG docker node
-
 # Create linuxbrew user for Homebrew installation
 RUN useradd -m -s /bin/bash linuxbrew && \
   echo 'linuxbrew ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
@@ -107,6 +104,12 @@ USER node
 RUN curl -fsSL https://claude.ai/install.sh | bash
 ENV PATH="/home/node/.local/bin:${PATH}"
 
+# Copy entrypoint script (runs as root to handle docker socket GID, then drops to node user)
+USER root
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 # Start gateway server with default config.
 # Binds to loopback (127.0.0.1) by default for security.
 #
