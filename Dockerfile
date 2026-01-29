@@ -101,6 +101,11 @@ ENV NODE_ENV=production
 # Allow non-root user to write temp files during runtime/tests.
 RUN chown -R node:node /app
 
+# Give node user ownership of global npm directories so they can install packages
+# This enables npm i -g as the node user without requiring root privileges
+RUN chown -R node:node /usr/local/lib/node_modules /usr/local/bin
+
+
 # Security hardening: Run as non-root user
 # The node:22-bookworm image includes a 'node' user (uid 1000)
 # This reduces the attack surface by preventing container escape via root privileges
