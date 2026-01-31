@@ -11,11 +11,11 @@ WORKDIR /app
 
 ARG OPENCLAW_DOCKER_APT_PACKAGES=""
 RUN if [ -n "$OPENCLAW_DOCKER_APT_PACKAGES" ]; then \
-      apt-get update && \
-      DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $OPENCLAW_DOCKER_APT_PACKAGES && \
-      apt-get clean && \
-      rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*; \
-    fi
+  apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends $OPENCLAW_DOCKER_APT_PACKAGES && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/* /var/cache/apt/archives/*; \
+  fi
 
 # Install Homebrew dependencies and GitHub CLI (gh)
 RUN apt-get update && \
@@ -120,8 +120,8 @@ USER root
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-RUN ln -s /app/moltbot.mjs /usr/local/bin/moltbot && \
-  chmod +x /app/moltbot.mjs
+RUN ln -s /app/openclaw.mjs /usr/local/bin/openclaw && \
+  chmod +x /app/openclaw.mjs
 
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 # Start gateway server with default config.
