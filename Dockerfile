@@ -115,6 +115,9 @@ USER node
 RUN curl -fsSL https://claude.ai/install.sh | bash
 ENV PATH="/home/node/.local/bin:${PATH}"
 
+# Install ccsinfo (Claude Code session info tool)
+RUN uv tool install git+https://github.com/myk-org/ccsinfo.git
+
 # Copy entrypoint script (runs as root to handle docker socket GID, then drops to node user)
 USER root
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
