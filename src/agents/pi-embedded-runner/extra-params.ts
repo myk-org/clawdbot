@@ -29,6 +29,11 @@ const OPENAI_RESPONSES_PROVIDERS = new Set(["openai"]);
 /** Provider name for Anthropic Vertex AI */
 const ANTHROPIC_VERTEX_PROVIDER = "anthropic-vertex";
 
+/** Map internal model IDs to Vertex AI API model names when they differ */
+const VERTEX_MODEL_ID_MAP: Record<string, string> = {
+  "claude-opus-4-6-1m": "claude-opus-4-6[1m]",
+};
+
 /**
  * Resolve provider-specific extra params from model config.
  * Used to pass through stream params like temperature/maxTokens.
@@ -299,7 +304,7 @@ function streamAnthropicVertex(
       const tools = convertToolsForVertex(context.tools);
 
       const params: Record<string, unknown> = {
-        model: encodeURIComponent(model.id),
+        model: VERTEX_MODEL_ID_MAP[model.id] ?? model.id,
         messages,
         max_tokens: options?.maxTokens || Math.floor(model.maxTokens / 3),
         stream: true,

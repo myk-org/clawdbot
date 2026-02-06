@@ -99,7 +99,7 @@ const VERTEX_CLAUDE_MODELS: readonly ModelDefinitionConfig[] = [
     maxTokens: 32000,
   },
   {
-    id: "claude-opus-4-6[1m]",
+    id: "claude-opus-4-6-1m",
     name: "Claude Opus 4.6 1M",
     reasoning: true,
     input: ["text", "image"],
