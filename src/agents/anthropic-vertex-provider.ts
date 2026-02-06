@@ -89,6 +89,24 @@ const VERTEX_CLAUDE_MODELS: readonly ModelDefinitionConfig[] = [
     contextWindow: 200000,
     maxTokens: 32000,
   },
+  {
+    id: "claude-opus-4-6",
+    name: "Claude Opus 4.6",
+    reasoning: true,
+    input: ["text", "image"],
+    cost: VERTEX_CLAUDE_COST.opus,
+    contextWindow: 200000,
+    maxTokens: 32000,
+  },
+  {
+    id: "claude-opus-4-6[1m]",
+    name: "Claude Opus 4.6 1M",
+    reasoning: true,
+    input: ["text", "image"],
+    cost: VERTEX_CLAUDE_COST.opus,
+    contextWindow: 1000000,
+    maxTokens: 32000,
+  },
 ] as const;
 
 /**
