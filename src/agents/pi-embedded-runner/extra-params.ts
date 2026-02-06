@@ -13,9 +13,8 @@ import type {
 import { calculateCost, parseStreamingJson, streamSimple } from "@mariozechner/pi-ai";
 // Import the class directly from the source module to avoid export type issues
 import { AssistantMessageEventStream } from "@mariozechner/pi-ai/dist/utils/event-stream.js";
-
-import { createAnthropicVertexClientIfAvailable } from "../anthropic-vertex-provider.js";
 import type { OpenClawConfig } from "../../config/config.js";
+import { createAnthropicVertexClientIfAvailable } from "../anthropic-vertex-provider.js";
 import { log } from "./logger.js";
 
 const OPENROUTER_APP_HEADERS: Record<string, string> = {
@@ -29,7 +28,6 @@ const OPENAI_RESPONSES_PROVIDERS = new Set(["openai"]);
 
 /** Provider name for Anthropic Vertex AI */
 const ANTHROPIC_VERTEX_PROVIDER = "anthropic-vertex";
-
 
 /**
  * Resolve provider-specific extra params from model config.
@@ -301,7 +299,7 @@ function streamAnthropicVertex(
       const tools = convertToolsForVertex(context.tools);
 
       const params: Record<string, unknown> = {
-        model: model.id,
+        model: encodeURIComponent(model.id),
         messages,
         max_tokens: options?.maxTokens || Math.floor(model.maxTokens / 3),
         stream: true,
