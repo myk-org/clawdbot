@@ -352,6 +352,15 @@ function streamAnthropicVertex(
         };
       }
 
+      // Ensure max_tokens > thinking.budget_tokens (API requirement)
+      if (params.thinking) {
+        const budgetTokens = (params.thinking as { budget_tokens: number }).budget_tokens;
+        const currentMax = params.max_tokens as number;
+        if (currentMax <= budgetTokens) {
+          params.max_tokens = budgetTokens + Math.max(currentMax, 1024);
+        }
+      }
+
       log.debug(`streaming via Vertex SDK for model ${model.id}`);
 
       // Cast through unknown to avoid strict type checking on the params object
