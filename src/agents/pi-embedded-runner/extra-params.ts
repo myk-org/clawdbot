@@ -31,8 +31,14 @@ const ANTHROPIC_VERTEX_PROVIDER = "anthropic-vertex";
 
 /** Map internal model IDs to Vertex AI API model names when they differ */
 const VERTEX_MODEL_ID_MAP: Record<string, string> = {
-  "claude-opus-4-6-1m": "claude-opus-4-6[1m]",
+  "claude-opus-4-6-1m": "claude-opus-4-6",
 };
+
+/** Models that require the 1M context beta header */
+const VERTEX_1M_CONTEXT_MODELS = new Set(["claude-opus-4-6-1m"]);
+
+/** Beta header value for 1M context window */
+const VERTEX_1M_BETA_HEADER = "context-1m-2025-08-07";
 
 /**
  * Resolve provider-specific extra params from model config.
@@ -349,8 +355,12 @@ function streamAnthropicVertex(
       log.debug(`streaming via Vertex SDK for model ${model.id}`);
 
       // Cast through unknown to avoid strict type checking on the params object
+      const streamOptions = VERTEX_1M_CONTEXT_MODELS.has(model.id)
+        ? { headers: { "anthropic-beta": VERTEX_1M_BETA_HEADER } }
+        : undefined;
       const anthropicStream = client.messages.stream(
         params as unknown as Parameters<typeof client.messages.stream>[0],
+        streamOptions as unknown as Parameters<typeof client.messages.stream>[1],
       );
 
       stream.push({ type: "start", partial: output });
