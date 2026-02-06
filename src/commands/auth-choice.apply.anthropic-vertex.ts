@@ -1,8 +1,8 @@
-import { checkVertexCredentials } from "../agents/anthropic-vertex-provider.js";
 import type { ApplyAuthChoiceParams, ApplyAuthChoiceResult } from "./auth-choice.apply.js";
+import { checkVertexCredentials } from "../agents/anthropic-vertex-provider.js";
 import { applyAuthProfileConfig } from "./onboard-auth.js";
 
-const ANTHROPIC_VERTEX_DEFAULT_MODEL = "anthropic-vertex/claude-sonnet-4-5";
+const ANTHROPIC_VERTEX_DEFAULT_MODEL = "anthropic-vertex/claude-opus-4-6";
 
 export async function applyAuthChoiceAnthropicVertex(
   params: ApplyAuthChoiceParams,
