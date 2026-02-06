@@ -93,10 +93,13 @@ function resolveCacheRetention(
  * Check if a model is using the Anthropic Vertex AI provider.
  */
 function isAnthropicVertexModel(model: Model<Api>): boolean {
-  return (
+  const result =
     model.provider === ANTHROPIC_VERTEX_PROVIDER ||
-    model.id.startsWith(`${ANTHROPIC_VERTEX_PROVIDER}/`)
+    model.id.startsWith(`${ANTHROPIC_VERTEX_PROVIDER}/`);
+  console.error(
+    `[VERTEX-DEBUG] isAnthropicVertexModel: provider="${model.provider}" id="${model.id}" result=${result}`,
   );
+  return result;
 }
 
 /**
@@ -274,6 +277,9 @@ function streamAnthropicVertex(
   // Use void to explicitly mark the promise as intentionally unhandled
   // The stream handles errors internally by emitting error events
   void (async () => {
+    console.error(
+      `[VERTEX-DEBUG] streamAnthropicVertex called: model.id="${model.id}" model.provider="${model.provider}"`,
+    );
     const output: AssistantMessage = {
       role: "assistant",
       content: [],
@@ -309,6 +315,7 @@ function streamAnthropicVertex(
         max_tokens: options?.maxTokens || Math.floor(model.maxTokens / 3),
         stream: true,
       };
+      console.error(`[VERTEX-DEBUG] API model name: "${params.model}" (mapped from "${model.id}")`);
 
       if (system) {
         params.system = system;
@@ -546,6 +553,10 @@ function streamAnthropicVertex(
       });
       stream.end();
     } catch (error) {
+      console.error(
+        `[VERTEX-DEBUG] streamAnthropicVertex ERROR:`,
+        error instanceof Error ? error.message : error,
+      );
       for (const block of output.content as Array<{ index?: number }>) {
         delete block.index;
       }

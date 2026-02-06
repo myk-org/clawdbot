@@ -211,6 +211,7 @@ export function resolveConfiguredModelRef(params: {
     }
     return raw?.primary?.trim() ?? "";
   })();
+  console.error(`[VERTEX-DEBUG] resolveConfiguredModelRef: rawModel="${rawModel}"`);
   if (rawModel) {
     const trimmed = rawModel.trim();
     const aliasIndex = buildModelAliasIndex({
@@ -236,6 +237,9 @@ export function resolveConfiguredModelRef(params: {
       defaultProvider: params.defaultProvider,
       aliasIndex,
     });
+    console.error(
+      `[VERTEX-DEBUG] resolveConfiguredModelRef resolved: ${resolved ? `provider="${resolved.ref.provider}" model="${resolved.ref.model}"` : "NULL - falling back to default"}`,
+    );
     if (resolved) {
       return resolved.ref;
     }

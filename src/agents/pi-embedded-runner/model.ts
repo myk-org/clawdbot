@@ -51,16 +51,23 @@ export function resolveModel(
   authStorage: AuthStorage;
   modelRegistry: ModelRegistry;
 } {
+  console.error(`[VERTEX-DEBUG] resolveModel called: provider="${provider}" modelId="${modelId}"`);
   const resolvedAgentDir = agentDir ?? resolveOpenClawAgentDir();
   const authStorage = discoverAuthStorage(resolvedAgentDir);
   const modelRegistry = discoverModels(authStorage, resolvedAgentDir);
   const model = modelRegistry.find(provider, modelId) as Model<Api> | null;
+  console.error(
+    `[VERTEX-DEBUG] modelRegistry.find result: ${model ? `found (id=${model.id})` : "NOT FOUND"}`,
+  );
   if (!model) {
     const providers = cfg?.models?.providers ?? {};
     const inlineModels = buildInlineProviderModels(providers);
     const normalizedProvider = normalizeProviderId(provider);
     const inlineMatch = inlineModels.find(
       (entry) => normalizeProviderId(entry.provider) === normalizedProvider && entry.id === modelId,
+    );
+    console.error(
+      `[VERTEX-DEBUG] inlineModels count: ${inlineModels.length}, inlineMatch: ${inlineMatch ? `found (id=${inlineMatch.id})` : "NOT FOUND"}`,
     );
     if (inlineMatch) {
       const normalized = normalizeModelCompat(inlineMatch as Model<Api>);
@@ -92,11 +99,13 @@ export function resolveModel(
       } as Model<Api>);
       return { model: fallbackModel, authStorage, modelRegistry };
     }
+    console.error(`[VERTEX-DEBUG] resolveModel ERROR: Unknown model: ${provider}/${modelId}`);
     return {
       error: `Unknown model: ${provider}/${modelId}`,
       authStorage,
       modelRegistry,
     };
   }
+  console.error(`[VERTEX-DEBUG] resolveModel SUCCESS: ${model.provider}/${model.id}`);
   return { model: normalizeModelCompat(model), authStorage, modelRegistry };
 }
