@@ -83,10 +83,17 @@ ENV PATH="${GOPATH}/bin:${PATH}"
 # Install gogcli (GOG.com CLI)
 # RUN curl -sL "https://github.com/steipete/gogcli/releases/download/v0.9.0/gogcli_0.9.0_linux_amd64.tar.gz" | tar -xz -C /usr/local/bin gog
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
-COPY ui/package.json ./ui/package.json
-COPY patches ./patches
-COPY scripts ./scripts
+# Give node user ownership of /app and global npm directories before switching user
+RUN chown node:node /app && \
+  chown -R node:node /usr/local/lib/node_modules /usr/local/bin
+
+# Switch to non-root user before populating /app to avoid slow recursive chown
+USER node
+
+COPY --chown=node:node package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY --chown=node:node ui/package.json ./ui/package.json
+COPY --chown=node:node patches ./patches
+COPY --chown=node:node scripts ./scripts
 
 RUN pnpm install --frozen-lockfile
 
@@ -97,19 +104,6 @@ ENV OPENCLAW_PREFER_PNPM=1
 RUN pnpm ui:build
 
 ENV NODE_ENV=production
-
-# Allow non-root user to write temp files during runtime/tests.
-RUN chown -R node:node /app
-
-# Give node user ownership of global npm directories so they can install packages
-# This enables npm i -g as the node user without requiring root privileges
-RUN chown -R node:node /usr/local/lib/node_modules /usr/local/bin
-
-
-# Security hardening: Run as non-root user
-# The node:22-bookworm image includes a 'node' user (uid 1000)
-# This reduces the attack surface by preventing container escape via root privileges
-USER node
 
 # Install Claude Code CLI
 RUN curl -fsSL https://claude.ai/install.sh | bash
