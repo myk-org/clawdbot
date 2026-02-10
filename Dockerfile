@@ -97,7 +97,7 @@ COPY --chown=node:node scripts ./scripts
 
 RUN pnpm install --frozen-lockfile
 
-COPY . .
+COPY --chown=node:node . .
 RUN pnpm build
 # Force pnpm for UI build (Bun may fail on ARM/Synology architectures)
 ENV OPENCLAW_PREFER_PNPM=1
