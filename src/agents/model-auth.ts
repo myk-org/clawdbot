@@ -4,11 +4,11 @@ import type { OpenClawConfig } from "../config/config.js";
 import type { ModelProviderAuthMode, ModelProviderConfig } from "../config/types.js";
 import { formatCliCommand } from "../cli/command-format.js";
 import { getShellEnvAppliedKeys } from "../infra/shell-env.js";
-import { getAnthropicVertexAuth } from "./anthropic-vertex-provider.js";
 import {
   normalizeOptionalSecretInput,
   normalizeSecretInput,
 } from "../utils/normalize-secret-input.js";
+import { getAnthropicVertexAuth } from "./anthropic-vertex-provider.js";
 import {
   type AuthProfileStore,
   ensureAuthProfileStore,

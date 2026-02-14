@@ -179,10 +179,14 @@ function convertMessagesForVertex(
       const blocks: Array<Record<string, unknown>> = [];
       for (const block of msg.content) {
         if (block.type === "text") {
-          if (block.text.trim().length === 0) continue;
+          if (block.text.trim().length === 0) {
+            continue;
+          }
           blocks.push({ type: "text", text: block.text });
         } else if (block.type === "thinking") {
-          if (block.thinking.trim().length === 0) continue;
+          if (block.thinking.trim().length === 0) {
+            continue;
+          }
           if (!block.thinkingSignature || block.thinkingSignature.trim().length === 0) {
             blocks.push({ type: "text", text: block.thinking });
           } else {
@@ -252,7 +256,9 @@ function convertMessagesForVertex(
 function convertToolsForVertex(
   tools?: Context["tools"],
 ): Array<{ name: string; description: string; input_schema: Record<string, unknown> }> {
-  if (!tools) return [];
+  if (!tools) {
+    return [];
+  }
   return tools.map((tool) => ({
     name: tool.name,
     description: tool.description,
@@ -621,19 +627,17 @@ function createStreamFnWithExtraParams(
   const underlying = baseStreamFn ?? streamSimple;
 
   const wrappedStreamFn: StreamFn = (model, context, options) => {
-    const typedModel = model as Model<Api>;
-
     // Check if this is an anthropic-vertex provider request
-    if (isAnthropicVertexModel(typedModel)) {
-      log.debug(`intercepting anthropic-vertex request for model ${typedModel.id}`);
-      return streamAnthropicVertex(typedModel, context, {
+    if (isAnthropicVertexModel(model)) {
+      log.debug(`intercepting anthropic-vertex request for model ${model.id}`);
+      return streamAnthropicVertex(model, context, {
         ...streamParams,
         ...options,
       });
     }
 
     // Fall through to the underlying stream function for other providers
-    return underlying(typedModel, context, {
+    return underlying(model, context, {
       ...streamParams,
       ...options,
     });
